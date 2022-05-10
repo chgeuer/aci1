@@ -66,7 +66,7 @@
             "value": "[subscription().subscriptionId]"
           }
         ],
-        "primaryScriptUri": "https://gist.githubusercontent.com/chgeuer/a0315f76b0d17aabadb35cdcea7869b5/raw/c9e45b843b22702f9af26c1dc877d796d1c6ab88/s.sh"
+        "primaryScriptUri": "[uri(deployment().properties.templateLink.uri, 'script.sh')]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'identity')]",
@@ -100,7 +100,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.3.1.62928",
-      "templateHash": "3910368376014884647"
+      "templateHash": "17077848867181504241"
     }
   }
 }
