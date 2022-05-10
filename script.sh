@@ -10,9 +10,9 @@ instanceMetadataJson="$( curl --silent --get \
   --header "Metadata:true" )"
 
 subscriptionId="$( echo "${instanceMetadataJson}" | jq -r ".compute.subscriptionId" )"
-
+echo "${subscriptionId}"
 resourceGroupName="$( echo "${instanceMetadataJson}" | jq -r ".compute.resourceGroupName" )"
-
+echo "${resourceGroupName}"
 access_token="$( curl --silent --get \
     --url "http://169.254.169.254/metadata/identity/oauth2/token" \
     --header "Metadata:true" \
@@ -20,10 +20,11 @@ access_token="$( curl --silent --get \
     --data-urlencode "resource=https://management.azure.com" \
     --data-urlencode "bypass_cache=true" \
     | jq -r ".access_token" )"
+echo "${access_token}"
 
 rgjson="$( curl --silent --get \
   --url "https://management.azure.com/subscriptions/${subscriptionId}/resourcegroups/${resourceGroupName}" \
-  --data-urlencode "api-version=2019-07N-01" \
+  --data-urlencode "api-version=2019-07-01" \
   --header "Authorization: Bearer ${access_token}" \
   )"
 
