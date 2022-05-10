@@ -1,0 +1,106 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    }
+  },
+  "functions": [],
+  "variables": {
+    "roles": {
+      "reader": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+      "owner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+      "contributor": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2018-11-30",
+      "name": "identity",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-04-01-preview",
+      "name": "[guid('vm-can-read-resource-group-to-determine-stuff', resourceGroup().id)]",
+      "properties": {
+        "principalType": "ServicePrincipal",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'identity'), '2018-11-30').principalId]",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roles').contributor)]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'identity')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deploymentScripts",
+      "apiVersion": "2019-10-01-preview",
+      "name": "deploymentScript",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'identity')]": {}
+        }
+      },
+      "kind": "AzureCLI",
+      "properties": {
+        "azCliVersion": "2.36.0",
+        "timeout": "PT30M",
+        "retentionInterval": "P1D",
+        "cleanupPreference": "OnExpiration",
+        "environmentVariables": [
+          {
+            "name": "GREETINGS",
+            "secureValue": "Hello World"
+          },
+          {
+            "name": "resourceGroupName",
+            "value": "[resourceGroup().name]"
+          },
+          {
+            "name": "subscriptionId",
+            "value": "[subscription().subscriptionId]"
+          }
+        ],
+        "primaryScriptUri": "https://gist.githubusercontent.com/chgeuer/a0315f76b0d17aabadb35cdcea7869b5/raw/c9e45b843b22702f9af26c1dc877d796d1c6ab88/s.sh"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'identity')]",
+        "[resourceId('Microsoft.Authorization/roleAssignments', guid('vm-can-read-resource-group-to-determine-stuff', resourceGroup().id))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "o": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.Resources/deploymentScripts', 'deploymentScript'), '2019-10-01-preview', 'Full')]"
+    },
+    "p": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.Resources/deploymentScripts', 'deploymentScript'))]"
+    },
+    "o2": {
+      "type": "object",
+      "value": "[reference('deploymentScript').outputs.rgjson]"
+    },
+    "o3": {
+      "type": "object",
+      "value": "[reference('deploymentScript').outputs.instanceMetadataJson]"
+    },
+    "o4": {
+      "type": "string",
+      "value": "[reference('deploymentScript').outputs.access_token]"
+    }
+  },
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.3.1.62928",
+      "templateHash": "3910368376014884647"
+    }
+  }
+}
