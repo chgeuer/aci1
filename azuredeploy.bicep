@@ -51,10 +51,6 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2019-10-01-prev
     cleanupPreference: 'OnExpiration'
     environmentVariables: [
       {
-        name: 'GREETINGS'
-        secureValue: 'Hello World'
-      }
-      {
         name: 'resourceGroupName'
         value: resourceGroup().name
       }
@@ -70,5 +66,5 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2019-10-01-prev
 output o object = reference(deploymentScript.id, '2019-10-01-preview', 'Full')
 output p object = deploymentScript.properties
 output o2 object = reference(deploymentScript.name).outputs.rgjson
-output o3 object = reference(deploymentScript.name).outputs.instanceMetadataJson
+output locat string = reference(deploymentScript.name).outputs.rgjson.location
 output o4 string = reference(deploymentScript.name).outputs.access_token

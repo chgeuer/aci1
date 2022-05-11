@@ -54,10 +54,6 @@
         "cleanupPreference": "OnExpiration",
         "environmentVariables": [
           {
-            "name": "GREETINGS",
-            "secureValue": "Hello World"
-          },
-          {
             "name": "resourceGroupName",
             "value": "[resourceGroup().name]"
           },
@@ -87,9 +83,9 @@
       "type": "object",
       "value": "[reference('deploymentScript').outputs.rgjson]"
     },
-    "o3": {
-      "type": "object",
-      "value": "[reference('deploymentScript').outputs.instanceMetadataJson]"
+    "locat": {
+      "type": "string",
+      "value": "[reference('deploymentScript').outputs.rgjson.location]"
     },
     "o4": {
       "type": "string",
@@ -100,7 +96,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.3.1.62928",
-      "templateHash": "17077848867181504241"
+      "templateHash": "7636661346431559566"
     }
   }
 }
