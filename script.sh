@@ -1,16 +1,24 @@
-#!/bin/bash -e
+#!/bin/bash
 
-echo "Fuck fuck fuck"
+echo "-----"
 
-echo "gr ${resourceGroupName} ${GREETINGS}"
+echo "enviroment var resourceGroupName: ${resourceGroupName}"
+echo "enviroment var GREETINGS:         ${GREETINGS}"
+
+curl --include --get \
+  --url "http://169.254.169.254/metadata/instance" \
+  --data-urlencode "api-version=2021-12-13" \
+  --header "Metadata:true"
+
 
 instanceMetadataJson="$( curl --silent --get \
   --url "http://169.254.169.254/metadata/instance" \
   --data-urlencode "api-version=2021-12-13" \
   --header "Metadata:true" )"
+echo "instanceMetadataJson ${instanceMetadataJson}"
 
 subscriptionId="$( echo "${instanceMetadataJson}" | jq -r ".compute.subscriptionId" )"
-echo "${subscriptionId}"
+echo "Retrieved ${subscriptionId}"
 resourceGroupName="$( echo "${instanceMetadataJson}" | jq -r ".compute.resourceGroupName" )"
 echo "${resourceGroupName}"
 access_token="$( curl --silent --get \
@@ -27,6 +35,8 @@ rgjson="$( curl --silent --get \
   --data-urlencode "api-version=2019-07-01" \
   --header "Authorization: Bearer ${access_token}" \
   )"
+
+echo "rgjson ${rgjson}"
 
 output="$( echo "{}" | \
   jq --arg x "${access_token}" '.access_token=$x' | \
