@@ -2,6 +2,21 @@
 
 echo "-----"
 
+
+
+IN="${AZ_SCRIPTS_USER_ASSIGNED_IDENTITY}"
+arrIN=(${IN//\// })
+echo "2 '${arrIN[2]}'"
+echo "-----"
+echo "3 '${arrIN[3]}'"
+echo "-----"
+echo "4 '${arrIN[4]}'"
+echo "-----"
+echo "5 '${arrIN[5]}'"
+echo "-----"
+
+
+
 curl --include --get \
   --url "http://169.254.169.254/metadata/instance" \
   --data-urlencode "api-version=2021-02-01" \
