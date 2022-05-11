@@ -48,15 +48,11 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2019-10-01-prev
     azCliVersion: '2.36.0'
     timeout: 'PT30M'
     retentionInterval: 'P1D'
-    cleanupPreference: 'OnExpiration'
+    cleanupPreference: 'OnSuccess'
     environmentVariables: [
       {
-        name: 'resourceGroupName'
+        name: 'resourceGroupNamex'
         value: resourceGroup().name
-      }
-      {
-        name: 'subscriptionId'
-        value: subscription().subscriptionId
       }
     ]
     primaryScriptUri: uri(deployment().properties.templateLink.uri, 'script.sh')
@@ -67,4 +63,4 @@ output o object = reference(deploymentScript.id, '2019-10-01-preview', 'Full')
 output p object = deploymentScript.properties
 output o2 object = reference(deploymentScript.name).outputs.rgjson
 output locat string = reference(deploymentScript.name).outputs.rgjson.location
-output o4 string = reference(deploymentScript.name).outputs.access_token
+

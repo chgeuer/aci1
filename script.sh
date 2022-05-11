@@ -1,26 +1,8 @@
 #!/bin/bash
 
-echo "-----"
-
-
-
-IN="${AZ_SCRIPTS_USER_ASSIGNED_IDENTITY}"
-arrIN=(${IN//\// })
-echo "2 '${arrIN[2]}'"
-echo "-----"
-echo "3 '${arrIN[3]}'"
-echo "-----"
-echo "4 '${arrIN[4]}'"
-echo "-----"
-echo "5 '${arrIN[5]}'"
-echo "-----"
-
-
-
-curl --include --get \
-  --url "http://169.254.169.254/metadata/instance" \
-  --data-urlencode "api-version=2021-02-01" \
-  --header "Metadata:true"
+arrIN=(${AZ_SCRIPTS_USER_ASSIGNED_IDENTITY//\// })
+subscriptionId="${arrIN[1]}"
+resourceGroupName="${arrIN[3]}"
 
 access_token="$( curl --silent --get \
     --url "http://169.254.169.254/metadata/identity/oauth2/token" \
@@ -29,7 +11,6 @@ access_token="$( curl --silent --get \
     --data-urlencode "resource=https://management.azure.com" \
     --data-urlencode "bypass_cache=true" \
     | jq -r ".access_token" )"
-
 
 rgjson="$( curl --silent --get \
   --url "https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}" \
@@ -41,7 +22,8 @@ echo "rgjson ${rgjson}"
 
 output="$( echo "{}" | \
   jq --arg x "${access_token}" '.access_token=$x' | \
-  jq --arg x "${rgjson}" '.rgjson=($x | fromjson)' \
+  jq --arg x "${rgjson}" '.rgjson=($x | fromjson)' | \
+  jq --arg x "${IDENTITY_HEADER}" '.IDENTITY_HEADER=$x' \
   )" 
 
 echo "${output}"

@@ -51,15 +51,11 @@
         "azCliVersion": "2.36.0",
         "timeout": "PT30M",
         "retentionInterval": "P1D",
-        "cleanupPreference": "OnExpiration",
+        "cleanupPreference": "OnSuccess",
         "environmentVariables": [
           {
-            "name": "resourceGroupName",
+            "name": "resourceGroupNamex",
             "value": "[resourceGroup().name]"
-          },
-          {
-            "name": "subscriptionId",
-            "value": "[subscription().subscriptionId]"
           }
         ],
         "primaryScriptUri": "[uri(deployment().properties.templateLink.uri, 'script.sh')]"
@@ -86,17 +82,13 @@
     "locat": {
       "type": "string",
       "value": "[reference('deploymentScript').outputs.rgjson.location]"
-    },
-    "o4": {
-      "type": "string",
-      "value": "[reference('deploymentScript').outputs.access_token]"
     }
   },
   "metadata": {
     "_generator": {
       "name": "bicep",
       "version": "0.3.1.62928",
-      "templateHash": "7636661346431559566"
+      "templateHash": "18194128495621205487"
     }
   }
 }
