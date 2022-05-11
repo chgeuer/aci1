@@ -32,3 +32,5 @@ output="$( echo "{}" | \
 echo "${output}"
 
 echo "${output}" > $AZ_SCRIPTS_OUTPUT_PATH
+
+set
