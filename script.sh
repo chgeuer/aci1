@@ -1,8 +1,8 @@
 #!/bin/bash
 
-arrIN=(${AZ_SCRIPTS_USER_ASSIGNED_IDENTITY//\// })
-subscriptionId="${arrIN[1]}"
-resourceGroupName="${arrIN[3]}"
+userAssigentIdentitySegments=(${AZ_SCRIPTS_USER_ASSIGNED_IDENTITY//\// })
+subscriptionId="${userAssigentIdentitySegments[1]}"
+resourceGroupName="${userAssigentIdentitySegments[3]}"
 
 access_token="$( curl --silent --get \
     --url "http://169.254.169.254/metadata/identity/oauth2/token" \
@@ -18,16 +18,10 @@ rgjson="$( curl --silent --get \
   --header "Authorization: Bearer ${access_token}" \
   )"
 
-echo "rgjson ${rgjson}"
-
 output="$( echo "{}" | \
   jq --arg x "${access_token}" '.access_token=$x' | \
   jq --arg x "${rgjson}" '.rgjson=($x | fromjson)' | \
   jq --arg x "${IDENTITY_HEADER}" '.IDENTITY_HEADER=$x' \
   )" 
 
-echo "${output}"
-
 echo "${output}" > $AZ_SCRIPTS_OUTPUT_PATH
-
-set

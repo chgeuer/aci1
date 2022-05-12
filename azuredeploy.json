@@ -5,6 +5,16 @@
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]"
+    },
+    "roleName": {
+      "type": "string",
+      "metadata": {
+        "description": "Type of authentication to use on the Virtual Machine."
+      },
+      "allowedValues": [
+        "Reader",
+        "Contributor"
+      ]
     }
   },
   "functions": [],
@@ -13,7 +23,8 @@
       "reader": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
       "owner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
       "contributor": "b24988ac-6180-42a0-ab88-20f7382dd24c"
-    }
+    },
+    "role": "[if(equals(parameters('roleName'), 'Reader'), variables('roles').reader, variables('roles').contributor)]"
   },
   "resources": [
     {
@@ -29,7 +40,7 @@
       "properties": {
         "principalType": "ServicePrincipal",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'identity'), '2018-11-30').principalId]",
-        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roles').contributor)]"
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('role'))]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'identity')]"
@@ -88,7 +99,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.3.1.62928",
-      "templateHash": "18194128495621205487"
+      "templateHash": "4870096990101238685"
     }
   }
 }

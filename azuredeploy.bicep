@@ -8,11 +8,20 @@
 
 param location string = resourceGroup().location
 
+@allowed([
+  'Reader'
+  'Contributor'
+])
+@description('Type of authentication to use on the Virtual Machine.')
+param roleName string
+
 var roles = {
   reader: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
   owner: '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
   contributor: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 }
+
+var role =  ((roleName == 'Reader') ? roles.reader : roles.contributor)
 
 resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
   name: 'identity'
@@ -27,7 +36,7 @@ resource managedAppRGPermission 'Microsoft.Authorization/roleAssignments@2020-04
     principalId: reference(identity.id, '2018-11-30').principalId
     // Want to give only Reader priviliges, so that the managed identity can access the RG in the bash script
     // But then it doesn't have access to the dynamically created storage account.
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roles.contributor)
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', role)
   }
 }
 
